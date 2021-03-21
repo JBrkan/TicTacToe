@@ -1,13 +1,14 @@
 package com.tictactoe.game;
 
 
-import java.lang.reflect.Array;
+import robot.Robot;
+
 import java.util.Random;
 import java.util.Scanner;
 
 public class GameField {
 
-    Empty[][] empty = new Empty[3][3];
+    Empty[][] empty;
     Robot robot;
 
     public GameField(Empty[][] empty, Robot robot) {
@@ -15,16 +16,13 @@ public class GameField {
         this.robot = robot;
     }
 
-    public void setEmpty(){
+    public void begin(){
         for(int i = 0;i < 3; i++){
             for(int j=0;j<3;j++){
                 empty[i][j] = new Empty();
             }
         }
-    }
-
-    public Empty[][] getEmpty(){
-        return this.empty;
+        playerMove();
     }
 
     public void playerMove(){
