@@ -1,11 +1,8 @@
-package main;
+package com.tictactoe.main;
 
 import com.tictactoe.game.Empty;
 import com.tictactoe.game.GameField;
-import robot.Robot;
-
-import java.util.ArrayList;
-import java.util.Scanner;
+import com.tictactoe.robot.Robot;
 
 public class Main {
 

@@ -1,4 +1,4 @@
-package robot;
+package com.tictactoe.robot;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class Robot {
     }
 
     public void fetchUvrede() {
-        System.out.print("Unesite ime robota koji ce igrati protiv vas: ");
+        System.out.print("Enter your opponents name: ");
         Scanner scan = new Scanner(System.in);
         this.ime = scan.nextLine();
 
@@ -102,7 +102,7 @@ public class Robot {
     }
 
     public void addRobot(){
-        System.out.print("Add a robot? ");
+        System.out.print("Add a Robot? ");
         if(!confirmation())
         {
             return;
@@ -113,7 +113,7 @@ public class Robot {
                     "user=username&password=pass");
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO roboti(ime)" +
                     "VALUES (?)");
-            System.out.print("Unesite ime robota: ");
+            System.out.print("Enter the robot name: ");
             stmt.setString(1, scan.nextLine());
             try {
                 stmt.executeUpdate();
@@ -134,12 +134,12 @@ public class Robot {
 
     public void addInsultToRobot() {
         fetchRobot();
-        System.out.print("Add insult to a robot?");
+        System.out.print("Add insults to a Robot? ");
         if(!confirmation())
         {
             return;
         }
-        System.out.print("Unesite ime robota: ");
+        System.out.print("Enter robot name: ");
         Scanner scan = new Scanner(System.in);
 
         try {
@@ -158,8 +158,8 @@ public class Robot {
                 ResultSet resultSet = stmtRobot.executeQuery();
                 do {
                     if (!resultSet.isBeforeFirst()) {
-                        System.out.println("Robot ne postoji u bazi");
-                        System.out.print("Unesite ime robota: ");
+                        System.out.println("The robot does not exist");
+                        System.out.print("Enter a robots name which is on the list shown above: ");
                         stmtRobot.setString(1, scan.nextLine());
                         resultSet = stmtRobot.executeQuery();
                     }   else{
@@ -171,7 +171,7 @@ public class Robot {
                 flag = true;
 
                 int brojUvreda = 0;
-                System.out.print("Unesite broj uvreda: ");
+                System.out.print("Enter the amount of insults: ");
                 do {
                     try{
                         brojUvreda = scan.nextInt();
@@ -179,11 +179,11 @@ public class Robot {
                         flag = false;
                     }catch(InputMismatchException ex){
                         scan.nextLine();
-                        System.out.print("Unesite BROJ uvreda:");
+                        System.out.print("Enter the amount using numbers please: ");
                     }
                 }while(flag);
                 for(int i = 0;i<brojUvreda;i++) {
-                    System.out.print("Unesite uvredu: ");
+                    System.out.print("Type in the insult ");
                     String uvreda = scan.nextLine();
                     stmt.setInt(1, resultSet.getInt("id"));
                     stmt.setString(2, uvreda);

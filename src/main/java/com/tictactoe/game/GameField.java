@@ -1,7 +1,7 @@
 package com.tictactoe.game;
 
 
-import robot.Robot;
+import com.tictactoe.robot.Robot;
 
 import java.util.Random;
 import java.util.Scanner;
