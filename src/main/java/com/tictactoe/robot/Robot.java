@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
+import org.h2.command.dml.Select;
+import org.h2.jdbcx.JdbcDataSource;
+
 public class Robot {
 
     private String ime;
-    private ArrayList<String> uvrede = new ArrayList<String>();
+    private ArrayList<String> uvrede = new ArrayList<>();
 
     public Robot() {}
 
@@ -21,22 +25,17 @@ public class Robot {
     }
 
     public void fetchRobot(){
-        System.out.println("Popis Robota");
+        System.out.println("Robo list");
         System.out.println("//");
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/robot?" +
                     "user=username&password=pass");
             Statement stmt = conn.createStatement();
-            try {
                 ResultSet resultSet;
                 resultSet = stmt.executeQuery("SELECT ime FROM roboti");
                 while (resultSet.next()) {
                     System.out.println(resultSet.getString("ime"));
                 }
-
-            }catch(SQLException ignored){
-
-            }
             if(conn != null) {
                 conn.close();
             }
@@ -51,7 +50,7 @@ public class Robot {
     }
 
     public void fetchUvrede() {
-        System.out.print("Enter your opponents name: ");
+        System.out.print("Enter your opponents name (The opponent has to have insults): ");
         Scanner scan = new Scanner(System.in);
         this.ime = scan.nextLine();
 
@@ -68,6 +67,7 @@ public class Robot {
                 ResultSet resultSet;
                 resultSet = stmt.executeQuery();
                 if (!resultSet.isBeforeFirst() ) {
+                    System.out.println("Choose to add the robot");
                     fetchUvrede();
                 }
                 while (resultSet.next()) {
@@ -87,8 +87,8 @@ public class Robot {
             System.out.println("VendorError: " + ex.getErrorCode());
         }
     }
-    public boolean confirmation(){
-        String confirmation = null;
+    private boolean confirmation(){
+        String confirmation;
         Scanner scan = new Scanner(System.in);
         do {
             System.out.print("Confirm action (y/n): ");
@@ -107,20 +107,36 @@ public class Robot {
         {
             return;
         }
+        boolean flag=false;
+        fetchRobot();
         Scanner scan = new Scanner(System.in);
         try {
+
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/robot?" +
                     "user=username&password=pass");
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO roboti(ime)" +
                     "VALUES (?)");
-            System.out.print("Enter the robot name: ");
-            stmt.setString(1, scan.nextLine());
-            try {
-                stmt.executeUpdate();
+            PreparedStatement stmtRobot = conn.prepareStatement("SELECT ime FROM roboti WHERE ime = ?"
+                    );
+            ResultSet resultSet;
+            String name;
+            do {
+                System.out.print("Enter the robot name: ");
+                name = scan.nextLine();
+                stmt.setString(1, name);
+                stmtRobot.setString(1 , name);
+                resultSet = stmtRobot.executeQuery();
+                if(resultSet.isBeforeFirst()) {
+                    System.out.println("Robot already exists");
+                    addRobot();
+                } else if(!resultSet.isBeforeFirst()){
+                    flag = false;
+                    stmt.executeUpdate();
+                }
+            }while(flag);
 
-            }catch(SQLException ignored){
 
-            }
+
             if(conn != null) {
                 conn.close();
             }
@@ -153,7 +169,7 @@ public class Robot {
             stmtRobot.setString(1, scan.nextLine());
 
 
-            try {
+          
                 boolean flag = true;
                 ResultSet resultSet = stmtRobot.executeQuery();
                 do {
@@ -170,11 +186,11 @@ public class Robot {
 
                 flag = true;
 
-                int brojUvreda = 0;
+                int insultCount = 0;
                 System.out.print("Enter the amount of insults: ");
                 do {
                     try{
-                        brojUvreda = scan.nextInt();
+                        insultCount = scan.nextInt();
                         scan.nextLine();
                         flag = false;
                     }catch(InputMismatchException ex){
@@ -182,22 +198,17 @@ public class Robot {
                         System.out.print("Enter the amount using numbers please: ");
                     }
                 }while(flag);
-                for(int i = 0;i<brojUvreda;i++) {
+                for(int i = 0;i<insultCount;i++) {
                     System.out.print("Type in the insult ");
                     String uvreda = scan.nextLine();
                     stmt.setInt(1, resultSet.getInt("id"));
                     stmt.setString(2, uvreda);
                     stmt.executeUpdate();
                 }
-            }catch(SQLException ex){
-                System.out.println(ex.getMessage());
-                System.out.println("Greska u sql");
-            }
             if(conn != null) {
                 conn.close();
             }
         } catch (SQLException ex) {
-            // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());

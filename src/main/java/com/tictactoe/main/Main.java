@@ -4,10 +4,13 @@ import com.tictactoe.game.Empty;
 import com.tictactoe.game.GameField;
 import com.tictactoe.robot.Robot;
 
+
+
+
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
 
 
         try {
@@ -15,6 +18,7 @@ public class Main {
         } catch (Exception ex) {
             System.out.println("Driver not found");
         }
+
 
         Robot robot = new Robot();
         robot.addRobot();
