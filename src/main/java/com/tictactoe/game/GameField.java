@@ -1,13 +1,14 @@
 package com.tictactoe.game;
 
 
-import java.lang.reflect.Array;
+import com.tictactoe.robot.Robot;
+
 import java.util.Random;
 import java.util.Scanner;
 
 public class GameField {
 
-    Empty[][] empty = new Empty[3][3];
+    Empty[][] empty;
     Robot robot;
 
     public GameField(Empty[][] empty, Robot robot) {
@@ -15,26 +16,27 @@ public class GameField {
         this.robot = robot;
     }
 
-    public void setEmpty(){
+    public void begin(){
         for(int i = 0;i < 3; i++){
             for(int j=0;j<3;j++){
                 empty[i][j] = new Empty();
+                empty[i][j].draw();
             }
+            System.out.println();
         }
+        playerMove();
     }
 
-    public Empty[][] getEmpty(){
-        return this.empty;
-    }
-
-    public void playerMove(){
+    private void playerMove(){
         Scanner scan = new Scanner(System.in);
         boolean flag=true;
         do {
             try {
-                int x = scan.nextInt();
+                System.out.print("Enter coordinate x: ");
+                int x = scan.nextInt() -1;
+                System.out.print("Enter coordinate y: ");
                 scan.nextLine();
-                int y = scan.nextInt();
+                int y = scan.nextInt() -1;
                 scan.nextLine();
                 if (!(this.empty[x][y] instanceof Circle) && !(this.empty[x][y] instanceof Cross)) {
                     this.empty[x][y] = new Circle();
@@ -45,14 +47,14 @@ public class GameField {
 
             } catch (ArrayIndexOutOfBoundsException e) {
 
-                System.out.println("Unijeli ste nevaljanjo mjesto, bez pokusaja varanja molim");
+                System.out.println("Enter a valid field");
             }
         }while(flag);
         checkWin();
         aiThink();
     }
 
-    public void drawCurrentBoard(){
+    private void drawCurrentBoard(){
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 this.empty[i][j].draw();
@@ -62,68 +64,69 @@ public class GameField {
     }
 
 
-    public void checkWin(){
-        int brojacP = 0;
-        int brojacB = 0;
+    private void checkWin(){
+        int counterP = 0;
+        int counterB = 0;
 
         for(int i = 0;i<3;i++){
             for(int j = 0;j<3;j++){
                 if (this.empty[i][j] instanceof Circle){
-                    brojacP++;
+                    counterP++;
                 }
                 if (this.empty[i][j] instanceof Cross){
-                    brojacB++;
+                    counterB++;
                 }
             }
-            if(brojacP==3){
-                pobjedaIgraca();
+            if(counterP==3){
+                victoryPlayer();
             }
-            if(brojacB==3){
-                pobjedaAI();
+            if(counterB==3){
+                victoryAI();
             }
-            brojacP=0;
-            brojacB=0;
+            counterP=0;
+            counterB=0;
         }
 
         for(int i = 0;i<3;i++){
             for(int j = 0;j<3;j++){
                 if (this.empty[j][i] instanceof Circle){
-                    brojacP++;
+                    counterP++;
                 }
                 if (this.empty[j][i] instanceof Cross){
-                    brojacB++;
+                    counterB++;
                 }
             }
-            if(brojacP==3){
-                pobjedaIgraca();
+            if(counterP==3){
+                victoryPlayer();
             }
-            if(brojacB==3){
-                pobjedaAI();
+            if(counterB==3){
+                victoryAI();
             }
-            brojacP=0;
+            counterP=0;
         }
         if(this.empty[0][0] instanceof Circle && this.empty[1][1] instanceof Circle && this.empty[2][2] instanceof Circle)
         {
-            pobjedaIgraca();
+            victoryPlayer();
         }else
             if(this.empty[0][0] instanceof Cross && this.empty[1][1] instanceof Cross && this.empty[2][2] instanceof Cross){
-                pobjedaAI();
+                victoryAI();
             }
 
         if(this.empty[2][0] instanceof Circle && this.empty[1][1] instanceof Circle && this.empty[0][2] instanceof Circle){
-            pobjedaIgraca();
+            victoryPlayer();
         }else
             if(this.empty[2][0] instanceof Circle && this.empty[1][1] instanceof Circle && this.empty[0][2] instanceof Circle){
-            pobjedaAI();
+            victoryAI();
     }
     }
 
-    private void pobjedaAI(){
-        System.out.println("Robotska nadmoc");
+    private void victoryAI(){
+        System.out.println("The AI has somehow outsmarted you?");
         System.exit(0);
     }
-    private void  pobjedaIgraca(){
-        System.out.println("Pobijedio je igrac");
+    private void  victoryPlayer(){
+        System.out.println("You WON!");
+        System.out.println("You WON!");
         System.exit(0);
     }
 
