@@ -32,4 +32,4 @@ FOREIGN KEY (uvredaID) REFERENCES roboti(id),
 PRIMARY KEY(id)
 );
 
-\\
+//
